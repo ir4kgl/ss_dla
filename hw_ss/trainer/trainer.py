@@ -196,8 +196,7 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
 
-        self.writer.log(
-            {"predicted": self.writer.Audio(batch["predicted_audio"][0])})
+        self.writer.add_audio("prediction", batch["predicted_audio"][0])
 
     @torch.no_grad()
     def get_grad_norm(self, norm_type=2):
