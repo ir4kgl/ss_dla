@@ -58,12 +58,12 @@ def collate_fn_test(dataset_items: List[dict]):
     batch_target_len = max(batch_audio_len, batch_target_len)
 
     result_batch["audio"] = torch.cat(
-        tuple(ConstantPad2d((0, batch_audio_len - x["audio_lenth"], 0, 0), 0)(x["audio"]) for x in dataset_items)).unsqueeze(1)
+        tuple(ConstantPad2d((0, batch_audio_len - x["audio_len"], 0, 0), 0)(x["audio"]) for x in dataset_items)).unsqueeze(1)
 
     result_batch["target"] = torch.cat(
-        tuple(ConstantPad2d((0, batch_target_len - x["target_lenth"], 0, 0), 0)(x["target"]) for x in dataset_items)).unsqueeze(1)
+        tuple(ConstantPad2d((0, batch_target_len - x["target_len"], 0, 0), 0)(x["target"]) for x in dataset_items)).unsqueeze(1)
 
     result_batch["ref"] = torch.cat(
-        tuple(ConstantPad2d((0, batch_ref_len - x["ref_lenth"], 0, 0), 0)(x["ref"]) for x in dataset_items)).unsqueeze(1)
+        tuple(ConstantPad2d((0, batch_ref_len - x["ref_len"], 0, 0), 0)(x["ref"]) for x in dataset_items)).unsqueeze(1)
 
     return result_batch
