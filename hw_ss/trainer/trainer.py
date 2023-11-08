@@ -147,7 +147,7 @@ class Trainer(BaseTrainer):
 
         metrics.update("loss", batch["loss"].item())
         for met in self.metrics:
-            metrics.update(met.name, met(**batch))
+            metrics.update(met.name, met(batch))
         return batch
 
     def _evaluation_epoch(self, epoch, part, dataloader):
