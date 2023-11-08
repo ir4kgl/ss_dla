@@ -11,7 +11,7 @@ class SISPDRLossWrapper():
 
     def forward(self, batch) -> Tensor:
         p_short, p_middle, p_long = batch["predicted_audio"]
-        target = torch.squeeze(batch["target"])
+        target = batch["target"].squeeze()
         sisdr_short = self.sdisdr.forward(
             preds=p_short,
             target=target
