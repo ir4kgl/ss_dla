@@ -24,4 +24,4 @@ class SISPDRLossWrapper():
             preds=p_long,
             target=target
         )
-        return -(1 - self.alpha - self.beta) * sisdr_short + self.alpha * sisdr_middle + self.beta * sisdr_long
+        return -(1 - self.alpha - self.beta) * sisdr_short - self.alpha * sisdr_middle - self.beta * sisdr_long
