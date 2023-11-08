@@ -12,7 +12,7 @@ class SISPDRMetric(BaseMetric):
         self.sdisdr = ScaleInvariantSignalDistortionRatio().to(device)
 
     def __call__(self, batch):
-        p_short = batch["predicted_audio"]
+        p_short = batch["predicted_audio"][0]
         target = batch["target"].squeeze()
         sisdr_short = self.sdisdr.forward(
             preds=p_short,
