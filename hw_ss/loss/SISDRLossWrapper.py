@@ -4,10 +4,10 @@ from torchmetrics.audio import ScaleInvariantSignalDistortionRatio
 
 
 class SISPDRLossWrapper():
-    def __init__(self, alpha=0.1, beta=0.1):
+    def __init__(self, device=torch.device("cuda:0"), alpha=0.1, beta=0.1):
         self.alpha = alpha
         self.beta = beta
-        self.sdisdr = ScaleInvariantSignalDistortionRatio()
+        self.sdisdr = ScaleInvariantSignalDistortionRatio().to(device)
 
     def forward(self, batch) -> Tensor:
         p_short, p_middle, p_long = batch["predicted_audio"]

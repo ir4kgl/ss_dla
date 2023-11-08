@@ -41,7 +41,7 @@ def main(config):
         model = torch.nn.DataParallel(model, device_ids=device_ids)
 
     # get function handles of loss and metrics
-    loss_module = config.init_obj(config["loss"], module_loss)
+    loss_module = config.init_obj(config["loss"], module_loss, device=device)
     metrics = [
         config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]
     ]
