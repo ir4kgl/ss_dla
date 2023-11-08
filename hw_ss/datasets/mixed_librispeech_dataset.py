@@ -11,6 +11,8 @@ from hw_ss.utils import ROOT_PATH
 
 class MixedLibrispeechDataset(BaseDataset):
     def __init__(self, part, data_dir, index_dir, *args, **kwargs):
+        self.indeces_map = {}
+        self.next_label = 0
         self._data_dir = Path(data_dir)
         self._index_dir = Path(index_dir)
         index = self._get_or_load_index(part)
@@ -45,6 +47,10 @@ class MixedLibrispeechDataset(BaseDataset):
             ref_length = ref_info.num_frames / ref_info.sample_rate
             audio_lenth = mix_info.num_frames / mix_info.sample_rate
             target_length = target_info.num_frames / target_info.sample_rate
+            target_id = int(target.split('/')[-1].split('_')[0])
+            if not target_id in self.indeces_map.keys():
+                self.indeces_map[target_id] = self.next_label
+                self.next_label += 1
             index.append(
                 {
                     "path_target": target,
@@ -53,6 +59,7 @@ class MixedLibrispeechDataset(BaseDataset):
                     "target_length": target_length,
                     "audio_len": audio_lenth,
                     "ref_length": ref_length,
+                    "target_id": self.indeces_map[target_id]
                 }
             )
         return index
@@ -65,6 +72,7 @@ class MixedLibrispeechDataset(BaseDataset):
         audio_wave = self.load_audio(path_audio)
         ref_wave = self.load_audio(path_ref)
         target_wave = self.load_audio(path_target)
+        target_id = data_dict["target_id"]
         # audio_wave = self.process_wave(path_audio)
         # audio_wave = self.process_wave(path_audio)
         # audio_wave = self.process_wave(path_audio)
@@ -75,4 +83,5 @@ class MixedLibrispeechDataset(BaseDataset):
             "path_target": path_target,
             "ref": ref_wave,
             "path_ref": path_ref,
+            "target_id": target_id
         }
