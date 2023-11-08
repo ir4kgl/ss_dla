@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-from torchmetrics.audio import PerceptualEvaluationSpeechQuality
+from torchmetrics.audio.pesq import PerceptualEvaluationSpeechQuality
 from hw_ss.base.base_metric import BaseMetric
 
 
