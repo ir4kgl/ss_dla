@@ -113,12 +113,13 @@ class Trainer(BaseTrainer):
                 self.writer.add_scalar(
                     "learning rate", self.lr_scheduler.get_last_lr()[0]
                 )
-                self._log_predictions(batch)
                 self._log_scalars(self.train_metrics)
                 # we don't want to reset train metrics at the start of every epoch
                 # because we are interested in recent train metrics
                 last_train_metrics = self.train_metrics.result()
                 self.train_metrics.reset()
+                if batch_idx == 0:
+                    self._log_predictions(batch)
             if batch_idx >= self.len_epoch:
                 break
         log = last_train_metrics
@@ -172,7 +173,8 @@ class Trainer(BaseTrainer):
                 )
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_scalars(self.evaluation_metrics)
-            self._log_predictions(batch)
+            if batch_idx == 0:
+                self._log_predictions(batch)
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():

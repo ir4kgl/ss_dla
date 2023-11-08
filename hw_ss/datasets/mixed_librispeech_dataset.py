@@ -54,6 +54,7 @@ class MixedLibrispeechDataset(BaseDataset):
                     "target_id": self.indeces_map[target_id]
                 }
             )
+        print(self.__len__())
         return index
 
     def __getitem__(self, ind):
