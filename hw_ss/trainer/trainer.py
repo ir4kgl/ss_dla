@@ -13,7 +13,7 @@ from tqdm import tqdm
 from hw_ss.base import BaseTrainer
 from hw_ss.base.base_text_encoder import BaseTextEncoder
 from hw_ss.logger.utils import plot_spectrogram_to_buf
-from hw_ss.metric.utils import calc_cer, calc_wer
+# from hw_ss.metric.utils import calc_cer, calc_wer
 from hw_ss.utils import inf_loop, MetricTracker
 
 

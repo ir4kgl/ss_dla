@@ -5,12 +5,11 @@ from torch.utils.data import ConcatDataset, DataLoader
 import hw_ss.augmentations
 import hw_ss.datasets
 from hw_ss import batch_sampler as batch_sampler_module
-from hw_ss.base.base_text_encoder import BaseTextEncoder
 from hw_ss.collate_fn.collate import collate_fn
 from hw_ss.utils.parse_config import ConfigParser
 
 
-def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
+def get_dataloaders(configs: ConfigParser):
     dataloaders = {}
     for split, params in configs["data"].items():
         num_workers = params.get("num_workers", 1)
@@ -27,7 +26,7 @@ def get_dataloaders(configs: ConfigParser, text_encoder: BaseTextEncoder):
         datasets = []
         for ds in params["datasets"]:
             datasets.append(configs.init_obj(
-                ds, hw_ss.datasets, text_encoder=text_encoder, config_parser=configs,
+                ds, hw_ss.datasets, config_parser=configs,
                 wave_augs=wave_augs, spec_augs=spec_augs))
         assert len(datasets)
         if len(datasets) > 1:

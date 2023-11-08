@@ -7,10 +7,7 @@ from functools import reduce, partial
 from operator import getitem
 from pathlib import Path
 
-from hw_ss import text_encoder as text_encoder_module
-from hw_ss.base.base_text_encoder import BaseTextEncoder
 from hw_ss.logger import setup_logging
-from hw_ss.text_encoder import CTCCharTextEncoder
 from hw_ss.utils import read_json, write_json, ROOT_PATH
 
 
@@ -30,7 +27,6 @@ class ConfigParser:
         # load config file and apply modification
         self._config = _update_config(config, modification)
         self.resume = resume
-        self._text_encoder = None
 
         # set save_dir where trained model and log will be saved.
         save_dir = Path(self.config["trainer"]["save_dir"])
@@ -51,7 +47,8 @@ class ConfigParser:
 
         # configure logging module
         setup_logging(self.log_dir)
-        self.log_levels = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
+        self.log_levels = {0: logging.WARNING,
+                           1: logging.INFO, 2: logging.DEBUG}
 
     @classmethod
     def from_args(cls, args, options=""):
@@ -136,15 +133,6 @@ class ConfigParser:
         logger = logging.getLogger(name)
         logger.setLevel(self.log_levels[verbosity])
         return logger
-
-    def get_text_encoder(self) -> BaseTextEncoder:
-        if self._text_encoder is None:
-            if "text_encoder" not in self._config:
-                self._text_encoder = CTCCharTextEncoder()
-            else:
-                self._text_encoder = self.init_obj(self["text_encoder"],
-                                                   default_module=text_encoder_module)
-        return self._text_encoder
 
     # setting read-only attributes
     @property

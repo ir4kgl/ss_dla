@@ -4,7 +4,6 @@ import torch
 
 from hw_ss.datasets import LibrispeechDataset, CustomDirAudioDataset, CustomAudioDataset
 from hw_ss.tests.utils import clear_log_folder_after_use
-from hw_ss.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_ss.utils import ROOT_PATH
 from hw_ss.utils.parse_config import ConfigParser
 
@@ -75,7 +74,8 @@ class TestDataset(unittest.TestCase):
             ("text", str),
             ("text_encoded", torch.Tensor)
         ]:
-            self.assertIn(field, training_example, f"Error during checking field {field}")
+            self.assertIn(field, training_example,
+                          f"Error during checking field {field}")
             self.assertIsInstance(training_example[field], expected_type,
                                   f"Error during checking field {field}")
 
