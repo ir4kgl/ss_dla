@@ -113,7 +113,7 @@ class Trainer(BaseTrainer):
                 self.writer.add_scalar(
                     "learning rate", self.lr_scheduler.get_last_lr()[0]
                 )
-                # self._log_predictions(**batch)
+                self._log_predictions(batch)
                 self._log_scalars(self.train_metrics)
                 # we don't want to reset train metrics at the start of every epoch
                 # because we are interested in recent train metrics
@@ -172,7 +172,7 @@ class Trainer(BaseTrainer):
                 )
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_scalars(self.evaluation_metrics)
-            # self._log_predictions(**batch)
+            self._log_predictions(batch)
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
@@ -189,33 +189,15 @@ class Trainer(BaseTrainer):
             total = self.len_epoch
         return base.format(current, total, 100.0 * current / total)
 
-    # def _log_predictions(
-    #         self,
-    #         audio_path,
-    #         examples_to_log=5,
-    #         *args,
-    #         **kwargs,
-    # ):
-    #     if self.writer is None:
-    #         return
+    def _log_predictions(
+            self,
+            batch
+    ):
+        if self.writer is None:
+            return
 
-    #     # tuples = list(zip(argmax_texts, text, argmax_texts_raw, audio_path))
-    #     shuffle(tuples)
-    #     rows = {}
-    #     for pred, target, raw_pred, audio_path in tuples[:examples_to_log]:
-    #         # target = BaseTextEncoder.normalize_text(target)
-    #         # wer = calc_wer(target, pred) * 100
-    #         # cer = calc_cer(target, pred) * 100
-
-    #         rows[Path(audio_path).name] = {
-    #             # "target": target,
-    #             # "raw prediction": raw_pred,
-    #             # "predictions": pred,
-    #             # "wer": wer,
-    #             # "cer": cer,
-    #         }
-    #     self.writer.add_table(
-    #         "predictions", pd.DataFrame.from_dict(rows, orient="index"))
+        self.writer.log(
+            {"predicted": self.writer.Audio(batch["predicted_audio"][0])})
 
     @torch.no_grad()
     def get_grad_norm(self, norm_type=2):
