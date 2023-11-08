@@ -26,13 +26,6 @@ class BaseDataset(Dataset):
     ):
         self.config_parser = config_parser
         self.wave_augs = wave_augs
-        self.spec_augs = spec_augs
-
-        # self._assert_index_is_valid(index)
-
-        # it's a good idea to sort index by audio length
-        # It would be easier to write length-based batch samplers later
-        index = self._sort_index(index)
         self._index: List[dict] = index
 
     def __getitem__(self, ind):
