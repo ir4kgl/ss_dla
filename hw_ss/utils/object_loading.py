@@ -5,7 +5,7 @@ from torch.utils.data import ConcatDataset, DataLoader
 import hw_ss.augmentations
 import hw_ss.datasets
 from hw_ss import batch_sampler as batch_sampler_module
-from hw_ss.collate_fn.collate import collate_fn
+from hw_ss.collate_fn.collate import collate_fn, collate_fn_test
 from hw_ss.utils.parse_config import ConfigParser
 
 
@@ -53,10 +53,17 @@ def get_dataloaders(configs: ConfigParser):
             f"Batch size ({bs}) shouldn't be larger than dataset length ({len(dataset)})"
 
         # create dataloader
-        dataloader = DataLoader(
-            dataset, batch_size=bs, collate_fn=collate_fn,
-            shuffle=shuffle, num_workers=num_workers,
-            batch_sampler=batch_sampler, drop_last=drop_last
-        )
+        if split == 'train':
+            dataloader = DataLoader(
+                dataset, batch_size=bs, collate_fn=collate_fn,
+                shuffle=shuffle, num_workers=num_workers,
+                batch_sampler=batch_sampler, drop_last=drop_last
+            )
+        else:
+            dataloader = DataLoader(
+                dataset, batch_size=bs, collate_fn=collate_fn_test,
+                shuffle=shuffle, num_workers=num_workers,
+                batch_sampler=batch_sampler, drop_last=drop_last
+            )
         dataloaders[split] = dataloader
     return dataloaders
