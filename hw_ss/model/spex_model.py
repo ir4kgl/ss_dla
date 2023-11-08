@@ -158,6 +158,7 @@ class SpeakerExtractor(nn.Module):
         self.tcn = []
         for i in range(R):
             self.tcn.append(TCNBlock(embed_dim, 2*embed_dim, embed_dim, B))
+        self.tcn = Sequential(*self.tcn)
         self.head1 = Sequential(nn.Conv1d(hidden, embed_dim, 1), nn.ReLU())
         self.head2 = Sequential(nn.Conv1d(hidden, embed_dim, 1), nn.ReLU())
         self.head3 = Sequential(nn.Conv1d(hidden, embed_dim, 1), nn.ReLU())
