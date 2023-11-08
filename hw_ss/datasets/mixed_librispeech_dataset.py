@@ -41,12 +41,7 @@ class MixedLibrispeechDataset(BaseDataset):
             ref = ref_files[i]
             mix = mix_files[i]
             target = target_files[i]
-            ref_info = torchaudio.info(ref)
-            mix_info = torchaudio.info(mix)
-            target_info = torchaudio.info(target)
-            ref_length = ref_info.num_frames / ref_info.sample_rate
-            audio_lenth = mix_info.num_frames / mix_info.sample_rate
-            target_length = target_info.num_frames / target_info.sample_rate
+
             target_id = int(target.split('/')[-1].split('_')[0])
             if not target_id in self.indeces_map.keys():
                 self.indeces_map[target_id] = self.next_label
@@ -56,9 +51,6 @@ class MixedLibrispeechDataset(BaseDataset):
                     "path_target": target,
                     "path_audio": mix,
                     "path_ref": ref,
-                    "target_length": target_length,
-                    "audio_len": audio_lenth,
-                    "ref_length": ref_length,
                     "target_id": self.indeces_map[target_id]
                 }
             )
@@ -69,19 +61,23 @@ class MixedLibrispeechDataset(BaseDataset):
         path_audio = data_dict["path_audio"]
         path_ref = data_dict["path_ref"]
         path_target = data_dict["path_target"]
+        target_id = data_dict["target_id"]
         audio_wave = self.load_audio(path_audio)
         ref_wave = self.load_audio(path_ref)
         target_wave = self.load_audio(path_target)
-        target_id = data_dict["target_id"]
-        # audio_wave = self.process_wave(path_audio)
-        # audio_wave = self.process_wave(path_audio)
-        # audio_wave = self.process_wave(path_audio)
+        audio_wave = self.process_wave(audio_wave)
+        ref_wave = self.process_wave(ref_wave)
+        target_wave = self.process_wave(target_wave)
+        ref_len = ref_wave.shape[-1]
+        audio_len = audio_wave.shape[-1]
+        target_len = target_wave.shape[-1]
         return {
             "audio": audio_wave,
-            "path_audio": path_audio,
             "target": target_wave,
-            "path_target": path_target,
             "ref": ref_wave,
-            "path_ref": path_ref,
+            "target_id": target_id,
+            "target_len": target_len,
+            "audio_len": audio_len,
+            "ref_len": ref_len,
             "target_id": target_id
         }
