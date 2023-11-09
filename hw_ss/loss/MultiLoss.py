@@ -6,8 +6,8 @@ from hw_ss.loss.CELossWrapper import CELossWrapper
 
 
 class MultiLoss():
-    def __init__(self, lambd=0.5):
-        self.sisdr = SISPDRLossWrapper()
+    def __init__(self, lambd=0.5, *args, **kwargs):
+        self.sisdr = SISPDRLossWrapper(*args, **kwargs)
         self.ce = CELossWrapper()
         self.lambd = lambd
 

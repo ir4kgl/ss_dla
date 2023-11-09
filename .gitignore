@@ -1,2 +1,9 @@
 data/
 dataset_mixes/
+**.pyc
+**.log
+**.json
+**.yaml
+**.wandb
+wandb/
+**.pth

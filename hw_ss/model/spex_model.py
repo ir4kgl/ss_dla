@@ -201,7 +201,7 @@ class SpeechDecoder(nn.Module):
 
 
 class SpexSimple(nn.Module):  # no classification head
-    def __init__(self, embed_dim=256, hidden=256, speaker_encoder_hidden=512, L=20, B=8, R=4, n_r=3, L1=20, L2=80, L3=160):
+    def __init__(self, embed_dim=256, hidden=256, speaker_encoder_hidden=512, L=20, B=8, R=4, L1=20, L2=80, L3=160):
         super().__init__()
         self.speech_encoder = SpeechEncoder(embed_dim, L, L1, L2, L3)
         self.speaker_encoder = SpeakerEncoder(
@@ -224,7 +224,7 @@ class SpexSimple(nn.Module):  # no classification head
 
 
 class ClassificatorHead(nn.Module):
-    def __init__(self, embed_dim, num_classes):
+    def __init__(self, num_classes, embed_dim=256):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(embed_dim, num_classes),
@@ -236,9 +236,14 @@ class ClassificatorHead(nn.Module):
 
 
 class SpexPlus(nn.Module):  # Spex with classification head
-    def __init__(self, num_classes, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.classificator = ClassificatorHead()
+    def __init__(self, num_classes,  embed_dim=256, hidden=256, speaker_encoder_hidden=512, L=20, B=8, R=4, L1=20, L2=80, L3=160):
+        super().__init__()
+        self.speech_encoder = SpeechEncoder(embed_dim, L, L1, L2, L3)
+        self.speaker_encoder = SpeakerEncoder(
+            embed_dim, speaker_encoder_hidden, L1)
+        self.speaker_extractor = SpeakerExtractor(embed_dim, hidden, B, R)
+        self.speech_decoder = SpeechDecoder(embed_dim, L, L1, L2, L3)
+        self.classificator = ClassificatorHead(num_classes)
 
     def forward(self, batch):
         X1, X2, X3 = self.speech_encoder(batch["ref"])
