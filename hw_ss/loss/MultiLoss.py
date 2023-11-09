@@ -12,4 +12,4 @@ class MultiLoss():
         self.lambd = lambd
 
     def forward(self, batch) -> Tensor:
-        return self.sisdr(batch) + self.lambd * self.ce(batch)
+        return self.sisdr.forward(batch) + self.lambd * self.ce.forward(batch)
