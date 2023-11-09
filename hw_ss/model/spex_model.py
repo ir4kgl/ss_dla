@@ -253,7 +253,7 @@ class SpexSimple(nn.Module):  # no classification head
         S2 = Y2 * M2
         S3 = Y3 * M3
         S1, S2, S3 = self.speech_decoder(S1, S2, S3)
-        predicted_audio = 20 * S1 / S1.norm(), 20 * S2 / S2.norm(), 20 * S3 / S3.norm()
+        predicted_audio = 20 * S1 / S1.norm(dim=-1,  keepdim=True), 20 * S2 / S2.norm(dim=-1,  keepdim=True), 20 * S3 / S3.norm(dim=-1,  keepdim=True)
         return {"predicted_audio": predicted_audio}
 
 
@@ -279,8 +279,8 @@ class SpexPlus(nn.Module):  # Spex with classification head
         self.classificator = ClassificatorHead(num_classes)
 
     def forward(self, batch):
-        ref = batch["ref"] / batch["ref"].mean(dim=-1,  keepdim=True)
-        audio = batch["audio"] / batch["audio"].mean(dim=-1, keepdim=True)
+        ref = batch["ref"] / batch["ref"].norm(dim=-1,  keepdim=True)
+        audio = batch["audio"] / batch["audio"].norm(dim=-1, keepdim=True)
         X1, X2, X3 = self.speech_encoder(ref)
         Y1, Y2, Y3 = self.speech_encoder(audio)
 
@@ -292,7 +292,7 @@ class SpexPlus(nn.Module):  # Spex with classification head
         S2 = Y2 * M2
         S3 = Y3 * M3
         S1, S2, S3 = self.speech_decoder(S1, S2, S3)
-        predicted_audio = 20 * S1 / S1.norm(), 20 * S2 / S2.norm(), 20 * S3 / S3.norm()
+        predicted_audio = 20 * S1 / S1.norm(dim=-1,  keepdim=True), 20 * S2 / S2.norm(dim=-1,  keepdim=True), 20 * S3 / S3.norm(dim=-1,  keepdim=True)
 
         return {
             "predicted_audio": predicted_audio,
