@@ -3,8 +3,8 @@ from torch import Tensor
 from torch import nn
 
 
-class CELossWrapper(device=None):
-    def __init__(self):
+class CELossWrapper():
+    def __init__(self, device=None):
         self.ce = nn.CrossEntropyLoss()
 
     def forward(self, batch) -> Tensor:
