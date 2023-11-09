@@ -279,8 +279,8 @@ class SpexPlus(nn.Module):  # Spex with classification head
         self.classificator = ClassificatorHead(num_classes)
 
     def forward(self, batch):
-        ref = batch["ref"] / batch["ref"].mean(dim=-1)
-        audio = batch["audio"] / batch["audio"].mean(dim=-1)
+        ref = batch["ref"] / batch["ref"].mean(dim=-1,  keepdim=True)
+        audio = batch["audio"] / batch["audio"].mean(dim=-1, keepdim=True)
         X1, X2, X3 = self.speech_encoder(ref)
         Y1, Y2, Y3 = self.speech_encoder(audio)
 
