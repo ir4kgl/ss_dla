@@ -197,7 +197,8 @@ class Trainer(BaseTrainer):
     ):
         if self.writer is None:
             return
-
+        self.writer.add_audio(
+            "target", batch["target"][0].squeeze(), sample_rate=16000)
         self.writer.add_audio(
             "prediction", batch["predicted_audio"][0], sample_rate=16000)
 
