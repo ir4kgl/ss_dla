@@ -74,7 +74,7 @@ class SpeakerEncoder(nn.Module):
 
     def forward(self, x1, x2, x3):
         x = torch.cat([x1, x2, x3], 1)
-        return self.layers(x).sum(-1)
+        return self.layers(x).mean(-1)
 
 
 class GlobalChannelLayerNorm(nn.Module):
