@@ -138,7 +138,8 @@ class Trainer(BaseTrainer):
         outputs = self.model(batch)
         batch.update(outputs)
 
-        batch["loss"] = self.criterion.forward(batch)
+        batch["loss"], batch["sisdr"], batch["ce"] = self.criterion.forward(
+            batch)
         if is_train:
             batch["loss"].backward()
             self._clip_grad_norm()
@@ -146,7 +147,10 @@ class Trainer(BaseTrainer):
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
 
-        metrics.update("loss", batch["loss"].item())
+        metrics.update("sisdr", batch["sisdr"].item())
+        if is_train:
+            metrics.update("loss", batch["loss"].item())
+            metrics.update("ce", batch["ce"].item())
         for met in self.metrics:
             metrics.update(met.name, met(batch))
         return batch
