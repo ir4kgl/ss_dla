@@ -218,5 +218,6 @@ class SpexSimple(nn.Module):  # no classification head
         S1 = Y1 * M1
         S2 = Y2 * M2
         S3 = Y3 * M3
-        predicted_audio = self.speech_decoder(S1, S2, S3)
+        S1, S2, S3 = self.speech_decoder(S1, S2, S3)
+        predicted_audio = 20 * S1 / S1.norm(), 20 * S2 / S2.norm(), 20 * S3 / S3.norm()
         return {"predicted_audio": predicted_audio}
