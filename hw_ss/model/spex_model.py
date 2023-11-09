@@ -126,8 +126,9 @@ class TCNBlock(nn.Module):
         super().__init__()
         self.first = TCN(in_channels + speaker_dim, hidden, in_channels)
         self.layers = []
-        for i in range(B-1):
-            self.layers.append(TCNResidual(in_channels, hidden, in_channels))
+        for i in range(1, B):
+            self.layers.append(TCNResidual(
+                in_channels, hidden, in_channels, dilation=(2 ** i)))
         self.layers = Sequential(*self.layers)
 
     def forward(self, x, v):
