@@ -228,7 +228,7 @@ class ClassificatorHead(nn.Module):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(embed_dim, num_classes),
-            nn.Softmax(-1)
+            # nn.Softmax(-1)
         )
 
     def forward(self, v):
