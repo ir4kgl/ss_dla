@@ -91,11 +91,9 @@ class SpeakerEncoder(nn.Module):
 
 
 class GlobalChannelLayerNorm(nn.Module):
-    def __init__(self, dim, eps=1e-05, elementwise_affine=True):
+    def __init__(self, dim, eps=1e-07):
         super(GlobalChannelLayerNorm, self).__init__()
         self.eps = eps
-        self.normalized_dim = dim
-        self.elementwise_affine = elementwise_affine
         self.beta = nn.Parameter(torch.zeros(dim, 1))
         self.gamma = nn.Parameter(torch.ones(dim, 1))
 
