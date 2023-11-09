@@ -51,10 +51,10 @@ class Trainer(BaseTrainer):
         self.log_step = 5
 
         self.train_metrics = MetricTracker(
-            "loss", "grad norm", *[m.name for m in self.metrics], writer=self.writer
+            "loss", "ce_loss", "sisdr_loss", "grad norm", *[m.name for m in self.metrics], writer=self.writer
         )
         self.evaluation_metrics = MetricTracker(
-            "loss", *[m.name for m in self.metrics], writer=self.writer
+            "sisdr_loss", *[m.name for m in self.metrics], writer=self.writer
         )
 
     @staticmethod
@@ -147,10 +147,10 @@ class Trainer(BaseTrainer):
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
 
-        metrics.update("sisdr", batch["sisdr"].item())
+        metrics.update("sisdr_loss", batch["sisdr_loss"].item())
         if is_train:
             metrics.update("loss", batch["loss"].item())
-            metrics.update("ce", batch["ce"].item())
+            metrics.update("ce_loss", batch["ce_loss"].item())
         for met in self.metrics:
             metrics.update(met.name, met(batch))
         return batch
