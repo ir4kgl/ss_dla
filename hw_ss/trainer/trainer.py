@@ -200,6 +200,10 @@ class Trainer(BaseTrainer):
         self.writer.add_audio(
             "target", batch["target"][0].squeeze(), sample_rate=16000)
         self.writer.add_audio(
+            "audio", batch["audio"][0].squeeze(), sample_rate=16000)
+        self.writer.add_audio(
+            "ref", batch["ref"][0].squeeze(), sample_rate=16000)
+        self.writer.add_audio(
             "prediction", batch["predicted_audio"][0], sample_rate=16000)
 
     @torch.no_grad()
