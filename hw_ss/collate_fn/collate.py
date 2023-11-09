@@ -49,7 +49,8 @@ def collate_fn_test(dataset_items: List[dict]):
     result_batch["audio_len"] = list(x["audio_len"] for x in dataset_items)
     result_batch["ref_len"] = list(x["ref_len"] for x in dataset_items)
     result_batch["target_len"] = list(x["target_len"] for x in dataset_items)
-    result_batch["speaker_id"] = list(x["target_id"] for x in dataset_items)
+    result_batch["speaker_id"] = torch.Tensor(
+        list(x["target_id"] for x in dataset_items))
     batch_audio_len = max(result_batch["audio_len"])
     batch_target_len = max(result_batch["target_len"])
     batch_ref_len = max(result_batch["ref_len"])

@@ -221,3 +221,40 @@ class SpexSimple(nn.Module):  # no classification head
         S1, S2, S3 = self.speech_decoder(S1, S2, S3)
         predicted_audio = 20 * S1 / S1.norm(), 20 * S2 / S2.norm(), 20 * S3 / S3.norm()
         return {"predicted_audio": predicted_audio}
+
+
+class ClassificatorHead(nn.Module):
+    def __init__(self, embed_dim, num_classes):
+        super().__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(embed_dim, num_classes),
+            nn.Softmax(-1)
+        )
+
+    def forward(self, v):
+        return self.layers(v)
+
+
+class SpexPlus(nn.Module):  # Spex with classification head
+    def __init__(self, num_classes, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.classificator = ClassificatorHead()
+
+    def forward(self, batch):
+        X1, X2, X3 = self.speech_encoder(batch["ref"])
+        Y1, Y2, Y3 = self.speech_encoder(batch["audio"])
+
+        v = self.speaker_encoder(X1, X2, X3)
+        predicted_logits = self.classificator(v)
+
+        M1, M2, M3 = self.speaker_extractor(Y1, Y2, Y3, v)
+        S1 = Y1 * M1
+        S2 = Y2 * M2
+        S3 = Y3 * M3
+        S1, S2, S3 = self.speech_decoder(S1, S2, S3)
+        predicted_audio = 20 * S1 / S1.norm(), 20 * S2 / S2.norm(), 20 * S3 / S3.norm()
+
+        return {
+            "predicted_audio": predicted_audio,
+            "predicted_logits": predicted_logits
+        }
