@@ -5,6 +5,8 @@ from torch import nn
 from torch.nn import Sequential
 import torch.nn.functional as F
 
+from torch.nn import ConstantPad2d
+
 
 class SpeechEncoder(nn.Module):
     def __init__(self, embed_dim, L, L1, L2, L3):
@@ -225,10 +227,16 @@ class SpeechDecoder(nn.Module):
         nn.init.xavier_uniform_(self.decoder3.weight)
         self.decoder3.bias.data.fill_(0)
 
-    def forward(self, s1, s2, s3):
+    def forward(self, s1, s2, s3, required_shape):
         s1 = self.decoder1(s1)
         s2 = self.decoder2(s2)
         s3 = self.decoder3(s3)
+        if s1.shape[-1] < required_shape:
+            s1 = ConstantPad2d((0, required_shape - s1.shape[-1], 0, 0), 0)(s1)
+        if s2.shape[-1] < required_shape:
+            s2 = ConstantPad2d((0, required_shape - s2.shape[-1], 0, 0), 0)(s2)
+        if s3.shape[-1] < required_shape:
+            s3 = ConstantPad2d((0, required_shape - s3.shape[-1], 0, 0), 0)(s3)
         return torch.squeeze(s1), torch.squeeze(s2)[:, :s1.shape[-1]], torch.squeeze(s3)[:, :s1.shape[-1]]
 
 
@@ -291,7 +299,7 @@ class SpexPlus(nn.Module):  # Spex with classification head
         S1 = Y1 * M1
         S2 = Y2 * M2
         S3 = Y3 * M3
-        S1, S2, S3 = self.speech_decoder(S1, S2, S3)
+        S1, S2, S3 = self.speech_decoder(S1, S2, S3, batch["audio"].shape[-1])
         # predicted_audio = 20 * S1 / S1.norm(dim=-1,  keepdim=True), 20 * S2 / S2.norm(dim=-1,  keepdim=True), 20 * S3 / S3.norm(dim=-1,  keepdim=True)
         predicted_audio = S1, S2, S3
         return {
