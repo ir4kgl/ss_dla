@@ -43,6 +43,13 @@ class MixedLibrispeechDataset(BaseDataset):
             target = target_files[i]
 
             target_id = int(target.split('/')[-1].split('_')[0])
+            noise_id = int(target.split('/')[-1].split('_')[1])
+
+            assert (target_id == int(ref.split('/')[-1].split('_')[0]))
+            assert (target_id == int(mix.split('/')[-1].split('_')[0]))
+            assert (noise_id == int(ref.split('/')[-1].split('_')[1]))
+            assert (noise_id == int(mix.split('/')[-1].split('_')[1]))
+
             if not target_id in self.indeces_map.keys():
                 self.indeces_map[target_id] = self.next_label
                 self.next_label += 1
