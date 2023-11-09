@@ -138,7 +138,7 @@ class Trainer(BaseTrainer):
         outputs = self.model(batch)
         batch.update(outputs)
 
-        batch["loss"], batch["sisdr"], batch["ce"] = self.criterion.forward(
+        batch["loss"], batch["sisdr_loss"], batch["ce_loss"] = self.criterion.forward(
             batch)
         if is_train:
             batch["loss"].backward()
