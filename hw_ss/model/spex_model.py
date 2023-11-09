@@ -101,7 +101,7 @@ class TCN(nn.Module):
             nn.PReLU(),
             GlobalChannelLayerNorm(hidden),
             nn.Conv1d(hidden, hidden, kernel_size, groups=hidden,
-                      padding=dilation*(kernel_size-1), dilation=dilation),
+                      padding=(dilation*(kernel_size-1)) // 2, dilation=dilation),
             nn.PReLU(),
             GlobalChannelLayerNorm(hidden),
             nn.Conv1d(hidden, out_channels, 1)
