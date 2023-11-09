@@ -17,6 +17,12 @@ class SpeechEncoder(nn.Module):
         self.L1 = L1
         self.L2 = L2
         self.L3 = L3
+        nn.init.xavier_uniform_(self.short_encoder.weight)
+        self.short_encoder.bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.middle_encoder.weight)
+        self.middle_encoder.bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.long_encoder.weight)
+        self.long_encoder.bias.data.fill_(0)
 
     def forward(self, x):
         x1 = self.short_encoder(x)
@@ -71,6 +77,10 @@ class SpeakerEncoder(nn.Module):
             nn.Conv1d(hidden, embed_dim, 1),
             nn.AvgPool1d(3)
         )
+        nn.init.xavier_uniform_(self.layers[1].weight)
+        self.layers[1].bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.layers[5].weight)
+        self.layers[5].bias.data.fill_(0)
 
     def forward(self, x1, x2, x3):
         x = torch.cat([x1, x2, x3], 1)
@@ -106,6 +116,12 @@ class TCN(nn.Module):
             GlobalChannelLayerNorm(hidden),
             nn.Conv1d(hidden, out_channels, 1)
         )
+        nn.init.xavier_uniform_(self.layers[0].weight)
+        self.layers[0].bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.layers[3].weight)
+        self.layers[3].bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.layers[6].weight)
+        self.layers[6].bias.data.fill_(0)
 
     def forward(self, x):
         return self.layers(x)
@@ -164,6 +180,15 @@ class SpeakerExtractor(nn.Module):
         self.head2 = Sequential(nn.Conv1d(hidden, embed_dim, 1), nn.ReLU())
         self.head3 = Sequential(nn.Conv1d(hidden, embed_dim, 1), nn.ReLU())
 
+        nn.init.xavier_uniform_(self.tail[1].weight)
+        self.tail[1].bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.head1[0].weight)
+        self.head1[0].bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.head2[0].weight)
+        self.head2[0].bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.head3[0].weight)
+        self.head3[0].bias.data.fill_(0)
+
     def forward(self, y1, y2, y3, v):
         y = self.tail(torch.cat([y1, y2, y3], 1))
         for layer in self.tcn:
@@ -192,6 +217,12 @@ class SpeechDecoder(nn.Module):
             embed_dim, 1, kernel_size=L2, stride=L//2)
         self.decoder3 = nn.ConvTranspose1d(
             embed_dim, 1, kernel_size=L3, stride=L//2)
+        nn.init.xavier_uniform_(self.decoder1.weight)
+        self.decoder1.bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.decoder2.weight)
+        self.decoder2.bias.data.fill_(0)
+        nn.init.xavier_uniform_(self.decoder3.weight)
+        self.decoder3.bias.data.fill_(0)
 
     def forward(self, s1, s2, s3):
         s1 = self.decoder1(s1)
@@ -228,7 +259,6 @@ class ClassificatorHead(nn.Module):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(embed_dim, num_classes),
-            # nn.Softmax(-1)
         )
 
     def forward(self, v):
