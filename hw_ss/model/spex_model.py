@@ -50,10 +50,13 @@ class ResNetBlock(nn.Module):
         if in_channels != out_channels:
             self.last_conv = nn.Conv1d(
                 in_channels, out_channels, kernel_size=1, bias=False)
+            nn.init.xavier_uniform_(self.last_conv.weight)
         self.last_layers = Sequential(
             nn.PReLU(),
             nn.MaxPool1d(max_pool)
         )
+        nn.init.xavier_uniform_(self.first_layers[0].weight)
+        nn.init.xavier_uniform_(self.first_layers[3].weight)
 
     def forward(self, x):
         x_prime = x
@@ -266,7 +269,7 @@ class ClassificatorHead(nn.Module):
 
 
 class SpexPlus(nn.Module):  # Spex with classification head
-    def __init__(self, num_classes,  embed_dim=256, hidden=256, speaker_encoder_hidden=512, L=20, B=8, R=4, L1=20, L2=80, L3=160):
+    def __init__(self, num_classes,  embed_dim=256, hidden=256, speaker_encoder_hidden=512, L=40, B=8, R=4, L1=40, L2=160, L3=320):
         super().__init__()
         self.speech_encoder = SpeechEncoder(embed_dim, L, L1, L2, L3)
         self.speaker_encoder = SpeakerEncoder(
