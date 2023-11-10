@@ -127,12 +127,16 @@ class Trainer(BaseTrainer):
         for part, dataloader in self.evaluation_dataloaders.items():
             val_log = self._evaluation_epoch(epoch, part, dataloader)
             log.update(**{f"{part}_{name}": value for name,
-                            value in val_log.items()})
+                          value in val_log.items()})
 
         return log
 
     def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
         batch = self.move_batch_to_device(batch, self.device)
+        if batch["audio"].shape == 1:
+            batch["audio"].unsqueeze(0)
+            batch["ref"].unsqueeze(0)
+            batch["target"].unsqueeze(0)
         if is_train:
             self.optimizer.zero_grad()
         outputs = self.model(batch)

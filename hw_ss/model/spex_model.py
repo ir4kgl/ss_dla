@@ -237,7 +237,7 @@ class SpeechDecoder(nn.Module):
             s2 = ConstantPad2d((0, required_shape - s2.shape[-1], 0, 0), 0)(s2)
         if s3.shape[-1] < required_shape:
             s3 = ConstantPad2d((0, required_shape - s3.shape[-1], 0, 0), 0)(s3)
-        return torch.squeeze(s1), torch.squeeze(s2)[:, :s1.shape[-1]], torch.squeeze(s3)[:, :s1.shape[-1]]
+        return torch.squeeze(s1, 1), torch.squeeze(s2, 1)[:, :s1.shape[-1]], torch.squeeze(s3, 1)[:, :s1.shape[-1]]
 
 
 class SpexSimple(nn.Module):  # no classification head

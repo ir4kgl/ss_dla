@@ -13,7 +13,7 @@ class SISPDRMetric(BaseMetric):
 
     def __call__(self, batch):
         p_short = batch["predicted_audio"][0]
-        target = batch["target"].squeeze()
+        target = batch["target"].squeeze(1)
         sisdr_short = self.sdisdr.forward(
             preds=p_short,
             target=target
