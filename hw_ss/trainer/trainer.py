@@ -123,11 +123,11 @@ class Trainer(BaseTrainer):
             if batch_idx >= self.len_epoch:
                 break
         log = last_train_metrics
-
-        for part, dataloader in self.evaluation_dataloaders.items():
-            val_log = self._evaluation_epoch(epoch, part, dataloader)
-            log.update(**{f"{part}_{name}": value for name,
-                          value in val_log.items()})
+        if epoch % 10 == 0:
+            for part, dataloader in self.evaluation_dataloaders.items():
+                val_log = self._evaluation_epoch(epoch, part, dataloader)
+                log.update(**{f"{part}_{name}": value for name,
+                              value in val_log.items()})
 
         return log
 
@@ -185,6 +185,7 @@ class Trainer(BaseTrainer):
                 self._log_predictions(batch)
 
         # add histogram of model parameters to the tensorboard
+
         for name, p in self.model.named_parameters():
             self.writer.add_histogram(name, p, bins="auto")
         return self.evaluation_metrics.result()
