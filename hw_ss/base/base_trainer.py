@@ -56,6 +56,9 @@ class BaseTrainer:
         if config.resume is not None:
             self._resume_checkpoint(config.resume)
 
+        if config.load is not None:
+            self._load_checkpoint(config.load)
+
     @abstractmethod
     def _train_epoch(self, epoch):
         """
@@ -193,4 +196,26 @@ class BaseTrainer:
         self.logger.info(
             "Checkpoint loaded. Resume training from epoch {}".format(
                 self.start_epoch)
+        )
+
+    def _load_checkpoint(self, resume_path):
+        """
+        Load from saved checkpoints
+
+        :param resume_path: Checkpoint path to be loaded
+        """
+        resume_path = str(resume_path)
+        self.logger.info("Loading checkpoint: {} ...".format(resume_path))
+        checkpoint = torch.load(resume_path, self.device)
+
+        # load architecture params from checkpoint.
+        if checkpoint["config"]["arch"] != self.config["arch"]:
+            self.logger.warning(
+                "Warning: Architecture configuration given in config file is different from that "
+                "of checkpoint. This may yield an exception while state_dict is being loaded."
+            )
+        self.model.load_state_dict(checkpoint["state_dict"])
+
+        self.logger.info(
+            "Checkpoint loaded. Start training from the beginning in new setting"
         )

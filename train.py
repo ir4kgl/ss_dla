@@ -86,6 +86,13 @@ if __name__ == "__main__":
         help="path to latest checkpoint (default: None)",
     )
     args.add_argument(
+        "-l",
+        "--load",
+        default=None,
+        type=str,
+        help="path to the checkpoint (default: None)",
+    )
+    args.add_argument(
         "-d",
         "--device",
         default=None,
