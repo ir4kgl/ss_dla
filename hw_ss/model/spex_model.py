@@ -300,7 +300,8 @@ class SpexPlus(nn.Module):  # Spex with classification head
         S2 = Y2 * M2
         S3 = Y3 * M3
         S1, S2, S3 = self.speech_decoder(S1, S2, S3, batch["audio"].shape[-1])
-        # predicted_audio = 20 * S1 / S1.norm(dim=-1,  keepdim=True), 20 * S2 / S2.norm(dim=-1,  keepdim=True), 20 * S3 / S3.norm(dim=-1,  keepdim=True)
+        predicted_audio = 20 * S1 / S1.norm(dim=-1,  keepdim=True), 20 * S2 / S2.norm(
+            dim=-1,  keepdim=True), 20 * S3 / S3.norm(dim=-1,  keepdim=True)
         predicted_audio = S1, S2, S3
         return {
             "predicted_audio": predicted_audio,
