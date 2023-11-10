@@ -28,6 +28,7 @@ class ConfigParser:
         self._config = _update_config(config, modification)
         self.resume = resume
         self.load = load
+        print("\n!!!", self.load, "\n\n")
 
         # set save_dir where trained model and log will be saved.
         save_dir = Path(self.config["trainer"]["save_dir"])
@@ -72,17 +73,28 @@ class ConfigParser:
             assert args.config is not None, msg_no_cfg
             resume = None
             cfg_fname = Path(args.config)
+        if args.load is not None:
+            load = Path(args.load)
+            cfg_fname = load.parent / "config.json"
+        else:
+            msg_no_cfg = "Configuration file need to be specified. " \
+                         "Add '-c config.json', for example."
+            assert args.config is not None, msg_no_cfg
+            load = None
+            cfg_fname = Path(args.config)
 
         config = read_json(cfg_fname)
         if args.config and resume:
             # update new config for fine-tuning
+            config.update(read_json(args.config))
+        if args.config and load:
             config.update(read_json(args.config))
 
         # parse custom cli options into dictionary
         modification = {
             opt.target: getattr(args, _get_opt_name(opt.flags)) for opt in options
         }
-        return cls(config, resume, modification)
+        return cls(config, resume, load, modification)
 
     @staticmethod
     def init_obj(obj_dict, default_module, *args, **kwargs):
