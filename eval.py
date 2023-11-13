@@ -57,8 +57,7 @@ def main(config, out_file):
             batch["pesq"] = pesq(batch)
             accum_sisdr.append(batch["sisdr"])
             accum_pesq.append(batch["pesq"])
-            if len(accum_sisdr) > 100:
-                break
+
     print("mean SI-SDR:\t", sum(accum_sisdr) / len(accum_sisdr))
     print("mean PESQ:\t", sum(accum_pesq) / len(accum_pesq))
 
