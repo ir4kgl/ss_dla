@@ -240,29 +240,6 @@ class SpeechDecoder(nn.Module):
         return torch.squeeze(s1, 1), torch.squeeze(s2, 1)[:, :s1.shape[-1]], torch.squeeze(s3, 1)[:, :s1.shape[-1]]
 
 
-class SpexSimple(nn.Module):  # no classification head
-    def __init__(self, embed_dim=256, hidden=256, speaker_encoder_hidden=512, L=20, B=8, R=4, L1=20, L2=80, L3=160):
-        super().__init__()
-        self.speech_encoder = SpeechEncoder(embed_dim, L, L1, L2, L3)
-        self.speaker_encoder = SpeakerEncoder(
-            embed_dim, speaker_encoder_hidden, L1)
-        self.speaker_extractor = SpeakerExtractor(embed_dim, hidden, B, R)
-        self.speech_decoder = SpeechDecoder(embed_dim, L, L1, L2, L3)
-
-    def forward(self, batch):
-        X1, X2, X3 = self.speech_encoder(batch["ref"])
-        Y1, Y2, Y3 = self.speech_encoder(batch["audio"])
-
-        v = self.speaker_encoder(X1, X2, X3)
-        M1, M2, M3 = self.speaker_extractor(Y1, Y2, Y3, v)
-        S1 = Y1 * M1
-        S2 = Y2 * M2
-        S3 = Y3 * M3
-        S1, S2, S3 = self.speech_decoder(S1, S2, S3)
-        predicted_audio = S1, S2, S3
-        return {"predicted_audio": predicted_audio}
-
-
 class ClassificatorHead(nn.Module):
     def __init__(self, num_classes, embed_dim=256):
         super().__init__()
