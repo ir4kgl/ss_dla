@@ -135,6 +135,6 @@ if __name__ == "__main__":
     config["data"]["test"]["batch_size"] = args.batch_size
     config["data"]["test"]["n_jobs"] = args.jobs
     if args.test_data_folder is not None:
-        config["data"]["test"]["datasets"][0]["data_dir"] = args.test_data_folder
+        config["data"]["test"]["datasets"][0]["args"]["data_dir"] = args.test_data_folder
 
     main(config, args.output)
