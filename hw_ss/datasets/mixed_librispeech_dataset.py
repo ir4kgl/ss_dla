@@ -114,11 +114,11 @@ class MixedGeneralDataset(BaseDataset):
         index = []
 
         ref_files = sorted(
-            glob(os.path.join(self._data_dir / "refs", '*-ref.wav')))
+            glob(os.path.join(self._data_dir / "refs", '*.wav')))
         mix_files = sorted(
-            glob(os.path.join(self._data_dir / "targets", '*-mixed.wav')))
+            glob(os.path.join(self._data_dir / "mix", '*.wav')))
         target_files = sorted(
-            glob(os.path.join(self._data_dir / "mix", '*-target.wav')))
+            glob(os.path.join(self._data_dir / "targets", '*.wav')))
 
         for i in range(len(ref_files)):
             ref = ref_files[i]
