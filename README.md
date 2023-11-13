@@ -12,9 +12,15 @@ cd ss_dla
 pip install -r ./requirements.txt
 ```
 
-## Checkpoints
+## Checkpoint
 
+To download the final checkpoint run 
 
+```shell
+python3 download_checkpoint.py
+```
+
+it will download final checkpoint in `checkpoints/final_run` folder.
 
 ## Run train
 
@@ -47,7 +53,7 @@ where `config.json` is configuration file with all data and model parameters.
 To run the evaluation with my final checkpoint you can use the configuration `configs/test_config.json`. The only thing to be modified there is `data_dir` where the evaluation dataset (with `refs`, `mix` and `targets` folders) is placed. After running the following command
 
 ```shell
-python3 eval.py --c configs/test_config.json --r checkpoints/final_run/checkpoint-epoch20.pth
+python3 eval.py --c configs/test_config.json --r checkpoints/final_run/checkpoint.pth
 ```
 
 mean SI-SDR and mean PESQ metrics values of my final model should be printed (test dataloader with batch size = 1 is created during the evaluation).
