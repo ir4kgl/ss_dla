@@ -1,0 +1,41 @@
+{
+  "name": "default_config",
+  "n_gpu": 1,
+  "preprocessing": {
+    "sr": 16000
+  },
+  "augmentations": {
+    "wave": []
+  },
+  "arch": {
+    "type": "SpexPlus",
+    "args": {
+      "num_classes": 500
+    }
+  },
+  "data": {
+    "test": {
+      "batch_size": 1,
+      "num_workers": 1,
+      "datasets": [
+        {
+          "type": "MixedGeneralDataset",
+          "args": {
+            "data_dir": "Snr0-lufs20-testSmall",
+            "index_dir": "index2"
+          }
+        }
+      ]
+    }
+  },
+  "metrics": [
+    {
+      "type": "SISPDRMetric",
+      "args": {}
+    },
+    {
+      "type": "PESQMetric",
+      "args": {}
+    }
+  ]
+}

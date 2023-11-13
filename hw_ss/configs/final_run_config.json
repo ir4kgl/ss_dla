@@ -1,0 +1,86 @@
+{
+  "name": "default_config",
+  "n_gpu": 1,
+  "preprocessing": {
+    "sr": 16000
+  },
+  "augmentations": {
+    "wave": []
+  },
+  "arch": {
+    "type": "SpexPlus",
+    "args": {
+      "num_classes": 500
+    }
+  },
+  "data": {
+    "train": {
+      "batch_size": 5,
+      "num_workers": 1,
+      "datasets": [
+        {
+          "type": "MixedLibrispeechDataset",
+          "args": {
+            "part": "train_data",
+            "data_dir": "mixes",
+            "index_dir": "index"
+          }
+        }
+      ]
+    },
+    "val": {
+      "batch_size": 1,
+      "num_workers": 1,
+      "datasets": [
+        {
+          "type": "MixedLibrispeechDataset",
+          "args": {
+            "part": "test_data",
+            "data_dir": "mixes",
+            "index_dir": "index"
+          }
+        }
+      ]
+    }
+  },
+  "optimizer": {
+    "type": "Adam",
+    "args": {
+      "lr": 1e-3
+    }
+  },
+  "loss": {
+    "type": "MultiLoss",
+    "args": {}
+  },
+  "metrics": [
+    {
+      "type": "SISPDRMetric",
+      "args": {}
+    },
+    {
+      "type": "PESQMetric",
+      "args": {}
+    }
+  ],
+  "lr_scheduler": {
+    "type": "OneCycleLR",
+    "args": {
+      "steps_per_epoch": 4261,
+      "epochs": 21,
+      "anneal_strategy": "cos",
+      "max_lr": 1e-3,
+      "pct_start": 0.2
+    }
+  },
+  "trainer": {
+    "epochs": 21,
+    "save_dir": "saved/",
+    "save_period": 5,
+    "verbosity": 2,
+    "monitor": "min val_loss",
+    "early_stop": 100,
+    "visualize": "wandb",
+    "wandb_project": "ss_project"
+  }
+}
