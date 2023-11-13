@@ -22,7 +22,7 @@
           "type": "MixedGeneralDataset",
           "args": {
             "data_dir": "Snr0-lufs20-testSmall",
-            "index_dir": "index2"
+            "index_dir": "index"
           }
         }
       ]
