@@ -1,82 +1,47 @@
-# ASR project barebones
+# Speaker separation project
+
+This repository contains speaker separation project done as a part of homework #2 for the DLA course at the CS Faculty of HSE.
 
 ## Installation guide
 
-< Write your installation guide here >
 
 ```shell
 pip install -r ./requirements.txt
 ```
 
-## Recommended implementation order
+## 
 
-You might be a little intimidated by the number of folders and classes. Try to follow this steps to gradually undestand
-the workflow.
+## Dataset generation
 
-1) Test `hw_asr/tests/test_dataset.py`  and `hw_asr/tests/test_config.py` and make sure everythin works for you
-2) Implement missing functions to fix tests in  `hw_asr\tests\test_text_encoder.py`
-3) Implement missing functions to fix tests in  `hw_asr\tests\test_dataloader.py`
-4) Implement functions in `hw_asr\metric\utils.py`
-5) Implement missing function to run `train.py` with a baseline model
-6) Write your own model and try to overfit it on a single batch
-7) Implement ctc beam search and add metrics to calculate WER and CER over hypothesis obtained from beam search.
-8) ~~Pain and suffering~~ Implement your own models and train them. You've mastered this template when you can tune your
-   experimental setup just by tuning `configs.json` file and running `train.py`
-9) Don't forget to write a report about your work
-10) Get hired by Google the next day
+To train speaker separation model we need to generate train and evaluation data first. You can find dataset generation script in `Dataset_generation.ipynb`
 
-## Before submitting
+In this notebook we have to write a path to dataset with `*.wav` audios (like [LibriSpeech](https://www.openslr.org/12)) to generate samples from.
+Important parameters here are `nfiles` in initialization of `MixtureGenerator` class which represents size of final nixed dataset  and `snr_levels` in call function.
 
-0) Make sure your projects run on a new machine after complemeting the installation guide or by 
-   running it in docker container.
-1) Search project for `# TODO: your code here` and implement missing functionality
-2) Make sure all tests work without errors
-   ```shell
-   python -m unittest discover hw_asr/tests
-   ```
-3) Make sure `test.py` works fine and works as expected. You should create files `default_test_config.json` and your
-   installation guide should download your model checpoint and configs in `default_test_model/checkpoint.pth`
-   and `default_test_model/config.json`.
-   ```shell
-   python test.py \
-      -c default_test_config.json \
-      -r default_test_model/checkpoint.pth \
-      -t test_data \
-      -o test_result.json
-   ```
-4) Use `train.py` for training
+In my experiments for the final train process I used train dataset of size 10000 with and evaluation dataset of size 1000 with `snr_levels=[0, 5]` and `snr_levels=[0]` for train and evaluation splits respectively. The choice of such SNR is based on the experiment settings in the original [SpEx+  paper](https://arxiv.org/pdf/2005.04686.pdf). 
 
-## Credits
+Samples for train are generated from `train-clean-100` [LibriSpeech](https://www.openslr.org/12) dataset split. Samples for evaluation are generated from `test-clean`  [LibriSpeech](https://www.openslr.org/12) dataset split.
 
-This repository is based on a heavily modified fork
-of [pytorch-template](https://github.com/victoresque/pytorch-template) repository.
 
-## Docker
+## SpEx+ Model
 
-You can use this project with docker. Quick start:
+File `hw_ss/model/spex_model.py` contains the implementation of [SpEx+](https://arxiv.org/pdf/2005.04686.pdf) model (with classification head). The code was written by me diligently studying the original article, however I took some inspiration and implementation of auxiliary classes (like `GlobalChannelLayerNorm`) from  [this SpEx+ implementation](https://github.com/gemengtju/SpEx_Plus/blob/master/nnet/conv_tas_net.py).
 
-```bash 
-docker build -t my_hw_asr_image . 
-docker run \
-   --gpus '"device=0"' \
-   -it --rm \
-   -v /path/to/local/storage/dir:/repos/asr_project_template/data/datasets \
-   -e WANDB_API_KEY=<your_wandb_api_key> \
-	my_hw_asr_image python -m unittest 
-```
+This model operates as follows: a batch (which is a dictionary with `audio` and `ref` keys required) is passed to forward method, and a dictionary with keys `predicted_audio` and `predicted_logits` is returned.  `predicted_audio` is then being passed to SISDR loss and compared with target audio and `predicted_logits` are passed to Cross-Enthropy loss. 
 
-Notes:
+Note that `predicted_audio` is a tuple of three instances corresponding to short, middle and long decoders.
 
-* `-v /out/of/container/path:/inside/container/path` -- bind mount a path, so you wouldn't have to download datasets at
-  the start of every docker run.
-* `-e WANDB_API_KEY=<your_wandb_api_key>` -- set envvar for wandb (if you want to use it). You can find your API key
-  here: https://wandb.ai/authorize
+`predicted_logits` are ignored during evaluation.
 
-## TODO
+## Loss function and metrics
 
-These barebones can use more tests. We highly encourage students to create pull requests to add more tests / new
-functionality. Current demands:
+See implementation of the loss function in `hw_ss/loss/MultiLoss.py`, it is namely a weighted sum of SISDR and CE losses. Hyperparameter `lambd` is set to `0.5` to follow the original paper. In SISDR loss (which is a part of `MultiLoss`) we set `alpha=0.1`, `beta=0.1` to follow the SpEx+ paper.
 
-* Tests for beam search
-* README section to describe folders
-* Notebook to show how to work with `ConfigParser` and `config_parser.init_obj(...)`
+Metrics are `SISDR` and `PESQ`, see the implementation in  `hw_ss/metric/sisdr.py` and  `hw_ss/metric/pesq.py` respectively. Note that we evaluate metrics on short decoder output only.
+
+
+
+
+
+
+
