@@ -50,10 +50,10 @@ python3 eval.py --c config.json --r CHECKPOINT.pth
 
 where `config.json` is configuration file with all data and model parameters.
 
-To run the evaluation with my final checkpoint you can use the configuration `configs/test_config.json`. The only thing to be modified there is `data_dir` where the evaluation dataset (with `refs`, `mix` and `targets` folders) is placed. After running the following command
+To run the evaluation with my final checkpoint you can use the configuration `configs/test_config.json`. The only thing to be modified there is data directory where the evaluation dataset (with `refs`, `mix` and `targets` folders) is placed. You can pass this directory via `--t` argument. After running the following command
 
 ```shell
-python3 eval.py --c configs/test_config.json --r checkpoints/final_run/checkpoint.pth
+python3 eval.py --c configs/test_config.json --r checkpoints/final_run/checkpoint.pth --t data
 ```
 
 mean SI-SDR and mean PESQ metrics values of my final model should be printed (test dataloader with batch size = 1 is created during the evaluation).
@@ -86,10 +86,3 @@ Note that `predicted_audio` is a tuple of three instances corresponding to short
 See implementation of the loss function in `hw_ss/loss/MultiLoss.py`, it is namely a weighted sum of SISDR and CE losses. Hyperparameter `lambd` is set to `0.5` to follow the original paper. In SISDR loss (which is a part of `MultiLoss`) we set `alpha=0.1`, `beta=0.1` to follow the SpEx+ paper.
 
 Metrics are `SISDR` and `PESQ`, see the implementation in  `hw_ss/metric/sisdr.py` and  `hw_ss/metric/pesq.py` respectively. Note that we evaluate metrics on short decoder output only.
-
-
-
-
-
-
-
